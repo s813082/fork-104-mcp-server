@@ -1,31 +1,31 @@
 # mcp-server-104
 
-台灣 [104 人力銀行](https://www.104.com.tw/)的**非官方** MCP server。讓 Claude（或任何 MCP client）能直接搜尋 104 的即時職缺。
+單一 AI 求職 MCP：搜尋台灣 [104 人力銀行](https://www.104.com.tw/)與 Appier 官方職缺、讀取你指定的本機履歷，並分析你提供的 JobFrog/CareerOS 單筆職缺。
 
 ## 這個工具適合你嗎？
 
 | 你的情境 | 最佳工具 |
 |---------|---------|
-| 偶爾自己找工作 | 直接開 104 網站 |
+| 偶爾自己找工作 | 直接開求職網站 |
 | 想寫個一次性爬蟲抓資料 | Playwright / cycletls 腳本就好，不用 MCP |
-| 不想自己寫腳本，要讓 Claude 直接幫你分析/比對/彙整/自動化職缺 | **這個 MCP** |
+| 想用一個 MCP 搜尋職缺並依履歷證據分析 | **這個 MCP** |
 
 ## 特點
 
 - **不用開瀏覽器、不用登入**：純 HTTP 直接拿 104 的即時資料，比 Playwright 輕一個量級
-- **Claude 讀完整 JD 再幫你挑**：不只看職稱 —— 一句話講條件，Claude 自己搜尋、讀完每份 JD，分好層、附上理由
+- **一站完成求職搜尋**：目前 Codex 模型可串接履歷讀取、跨來源搜尋與完整職缺內容，整理有履歷證據的推薦
 - **確切應徵人數**：104 網站只給區間（「6~10 人」），這裡給確切人數（「8 人」）
 - **應徵者背景分布**：學歷、年資，還有年齡、科系、技能、證照、語言 —— 知道你在跟誰競爭
 - **公司內搜尋會比對 JD 內文**：聯發科 C++ 的缺有 105 筆，職稱寫 C++ 的是 0 筆，只看職稱會全部漏掉
 - **有歧義先問，不亂猜**：公司同名（「聯發科」連便利商店都會跑出來）、地區同名（「信義區」有台北和基隆）
 - **自動標記 104 廣告**：104 會在結果裡塞跟關鍵字無關的廣告，可以一鍵排除；也能依更新時間掃新缺
-- **安裝簡單**：Claude Code、Codex 一行指令；Claude Desktop、Cursor 貼一段設定
+- **單一 MCP**：保留現有 104 工具，新增履歷讀取、Appier 搜尋與單筆職缺讀取
 
 ## 效果
 
-**一句話找職缺**：Claude 自己串工具、讀完 45 份 JD，分層推薦並附理由
+**一句話找職缺**：目前 Codex 模型依履歷與條件串接工具、讀取職缺內容，分層推薦並附理由
 
-> 因為是示意，只抓搜尋結果最前面的 45 筆職缺來分析（實際符合的有上千筆）。真的在找工作時，可以請 Claude 多翻幾頁、讀更多 JD。
+> 第一版最多處理 60 個候選、讀取 30 份完整 JD；推薦數不足十筆時會如實回報。
 
 ![一句話找職缺：搜尋、讀 JD、分 Tier](docs/images/demo-search.png)
 
@@ -41,47 +41,20 @@
 
 ## 安裝
 
-以下三種**擇一**，看你用什麼 client：
+目前只維護一個 Codex 註冊名稱 `job104`，並固定到完整 Git commit SHA，避免 `npx` 取得不同版本：
 
-**A：有快捷指令的 client** —— 一行搞定，設定自動寫好：
+```powershell
+codex mcp remove job104
+codex mcp add job104 -- npx -y github:s813082/fork-104-mcp-server#<40 位 commit SHA>
+```
+
+將 `<40 位 commit SHA>` 換成此版本交付時列出的完整 SHA。升級或回滾時，更新固定 SHA；不需要手動 clone。Git 安裝會執行 `prepare` 建置 `dist`。
+
+開發者本機工作流程：
 
 ```bash
-claude mcp add job104 -- npx -y mcp-server-104   # Claude Code
-```
-
-```bash
-codex mcp add job104 -- npx -y mcp-server-104    # OpenAI Codex CLI（新版才有；舊版走 B 的 TOML）
-```
-
-**B：手動貼設定的 client** —— 把設定貼進該 client 的 MCP 設定檔：
-
-Claude Desktop / Cursor / Windsurf（JSON）：
-
-```json
-{
-  "mcpServers": {
-    "job104": { "command": "npx", "args": ["-y", "mcp-server-104"] }
-  }
-}
-```
-
-OpenAI Codex CLI 舊版（`~/.codex/config.toml`）：
-
-```toml
-[mcp_servers.job104]
-command = "npx"
-args = ["-y", "mcp-server-104"]
-```
-
-> A 和 B 做的是同一件事：告訴 client「用 npx 啟動這個 server」。核心到哪都是 `npx -y mcp-server-104`，差別只在各家 client 怎麼登記它。
->
-> ⚠️ ChatGPT 網頁／桌面版**接不上**這種本機型（stdio）server —— 它只支援遠端 URL 型 MCP，它的雲端上沒有你的電腦可以跑 `npx`。
-
-**C：開發者，想改 code** —— clone 這個 repo 後：
-
-```bash
-npm install && npm run build
-claude mcp add job104 -- node /你的路徑/104-mcp-server/dist/index.js
+npm install
+npm test
 ```
 
 日常指令與測試策略見下方「開發」。
@@ -109,6 +82,13 @@ claude mcp add job104 -- node /你的路徑/104-mcp-server/dist/index.js
 | `save_profile` | ✅ 本機資料 | 驗證並以 0600 權限儲存使用者自己的 profile 與 rubric，不回顯整份內容 |
 | `score_job` | ✅ 參考評分 | 取得 JD 後依本機 profile/rubric 評估；關鍵字比對粗略，不保證準確 |
 | `get_company_salary` | ✅ 官方開放資料 | 查詢上市／上櫃 CSV 的非主管全時員工年度薪資統計，多家符合時回候選不猜 |
+| `read_resume` | ✅ 本機解析 | 讀取使用者明確指定的 PDF、DOCX、TXT、Markdown，提供頁碼／段落／行號證據；掃描 PDF 提示貼文字 |
+| `search_opportunities` | ✅ 跨來源搜尋 | 同時搜尋 104 與 Appier Greenhouse，最多 60 個候選、讀取 30 份完整 JD，並回報逐來源狀態 |
+| `read_posting` | ✅ 單筆讀取 | 讀取 104、Appier 官方 Greenhouse 或使用者提供的單筆公開 HTTPS 職缺；也接受貼上的內容 |
+
+第一版不會自動搜尋 JobFrog、CareerOS；你可提供一筆網址或貼上職缺內容交給 `read_posting` 分析。模型會把近似職缺標示為疑似重複，不會只因職稱相似就合併。
+
+求職搜尋由 MCP 取得資料，職涯條件整理與履歷比對由目前 Codex 模型完成，不呼叫額外模型 API。搜尋輸出逐筆帶回投遞網址、完整 JD、更新時間、薪資缺漏、來源狀態與讀取數量；模型依職缺要求和履歷段落證據整理「優先投遞、值得考慮、資訊不足、明確不符」，不估錄取機率。Appier 使用 [Greenhouse 公開 Job Board API](https://docs.greenhouse.io/job-board.html)，只逐筆取得候選的完整 JD。
 
 ### 求職背景初始化（本機）
 
@@ -121,7 +101,9 @@ claude mcp add job104 -- node /你的路徑/104-mcp-server/dist/index.js
 
 ### 隱私與資料位置
 
-個人 profile 與評分 rubric 只存使用者本機，預設位置是 `~/.config/job104-mcp/profile.json` 與 `rubric.json`；可用 `JOB104_HOME` 指定其他本機目錄。檔案會以 0600 權限寫入，且已加入 git ignore，不會寫進公開 repo。程式不會把 profile 內容寫入 log；`score_job` 只回傳 profile 的短 hash 供結果追溯。
+個人 profile 與評分 rubric 只存使用者本機，預設位置是 `~/.config/job104-mcp/profile.json` 與 `rubric.json`；可用 `JOB104_HOME` 指定其他本機目錄。POSIX 系統以 0600 權限寫入；Windows 的檔案 ACL 需另外檢查，不能把 POSIX 權限模式當作 Windows 私有權限保證。程式不會把 profile 內容寫入 log；`score_job` 只回傳 profile 的短 hash 供結果追溯。
+
+`read_resume` 只讀取你明確指定的履歷，不建立持久副本、不寫入 Git 或日誌，也不上傳求職網站；履歷文字會回到目前 Codex 對話供模型分析。模型從履歷推導的搜尋詞會送往 104/Appier，因此這不是完全離線處理。PDF 不可抽取文字時不使用外部 OCR。薪資未揭露會標示未知；履歷沒有寫到的能力標示缺少證據，不推估錄取機率。
 
 ### `search_jobs` 參數
 
