@@ -12,6 +12,10 @@ import { registerFindCompany } from "./tools/findCompany.js";
 import { registerGetJobDetail } from "./tools/getJobDetail.js";
 import { registerGetCompanyJobs } from "./tools/getCompanyJobs.js";
 import { registerGetApplyAnalysis } from "./tools/getApplyAnalysis.js";
+import { registerInitProfile } from "./tools/initProfile.js";
+import { registerSaveProfile } from "./tools/saveProfile.js";
+import { registerScoreJob } from "./tools/scoreJob.js";
+import { registerGetCompanySalary } from "./tools/getCompanySalary.js";
 import { closeClient } from "./api/httpClient.js";
 
 const log = (...args: unknown[]) => console.error("[104-mcp]", ...args);
@@ -26,6 +30,10 @@ registerFindCompany(server);
 registerGetJobDetail(server);
 registerGetCompanyJobs(server);
 registerGetApplyAnalysis(server);
+registerInitProfile(server);
+registerSaveProfile(server);
+registerScoreJob(server);
+registerGetCompanySalary(server);
 
 /** 收到結束訊號時先關 client 子程序再退出，避免留下殭屍程序 */
 function installShutdown() {

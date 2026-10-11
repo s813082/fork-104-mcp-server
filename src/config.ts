@@ -20,6 +20,10 @@ export const CONFIG = {
   applyAnalysisApiUrl: "https://www.104.com.tw/jb/104i/applyAnalysisToJob/all",
   /** 應徵分析頁網址（當應徵分析請求的 Referer，slug 接在後面） */
   applyAnalysisPageBase: "https://www.104.com.tw/jobs/apply/analysis/",
+  /** 公開資料：上市公司員工薪資 CSV（Node fetch，無 Cloudflare） */
+  salaryListedCsvUrl: "https://mopsfin.twse.com.tw/opendata/t187ap46_L_5.csv",
+  /** 公開資料：上櫃公司員工薪資 CSV（Node fetch，無 Cloudflare） */
+  salaryOtcCsvUrl: "https://mopsfin.twse.com.tw/opendata/t187ap46_O_5.csv",
   /** 地區代碼表（樹狀 JSON，放 static.104，沒有 Cloudflare） */
   areaJsonUrl: "https://static.104.com.tw/category-tool/json/Area.json",
   /** 職類代碼表（樹狀 JSON，放 static.104，沒有 Cloudflare） */

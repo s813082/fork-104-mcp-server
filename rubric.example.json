@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "evidencePolicy": {
+    "downgradeWithoutEvidence": true
+  },
+  "dimensions": [
+    {
+      "id": "skill-match",
+      "label": "技能命中",
+      "weight": 2,
+      "source": "profile.skills",
+      "type": "skillMatch",
+      "params": {
+        "terms": [
+          {
+            "term": "技能甲",
+            "aliases": ["技能甲別名"],
+            "userLevel": "B"
+          }
+        ]
+      }
+    },
+    {
+      "id": "domain",
+      "label": "領域關鍵字",
+      "weight": 1,
+      "source": "profile.preferences.industries",
+      "type": "keywordDomain",
+      "params": {
+        "keywords": ["領域詞甲", "領域詞乙"],
+        "fullHits": 2
+      }
+    },
+    {
+      "id": "experience",
+      "label": "年資適配",
+      "weight": 1,
+      "source": "profile.basic.yearsExperience",
+      "type": "numericFit",
+      "params": {
+        "field": "experience",
+        "userValue": 4,
+        "tolerance": 1,
+        "downlevelRatio": 0.5
+      }
+    },
+    {
+      "id": "salary",
+      "label": "薪資適配",
+      "weight": 1,
+      "source": "profile.salary.floor",
+      "type": "numericFit",
+      "params": {
+        "field": "salary",
+        "userValue": 50000
+      }
+    },
+    {
+      "id": "blocker",
+      "label": "排除條件",
+      "weight": 1,
+      "source": "profile.dealBreakers.keywords",
+      "type": "blocker",
+      "params": {
+        "terms": ["排除詞"],
+        "fields": ["description", "otherConditions"],
+        "cap": 30
+      }
+    }
+  ],
+  "bands": [
+    { "name": "高", "min": 80 },
+    { "name": "中", "min": 60 },
+    { "name": "低", "min": 0 }
+  ]
+}

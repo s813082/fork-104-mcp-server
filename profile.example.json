@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "basic": {
+    "title": "示例職涯方向",
+    "yearsExperience": 4,
+    "locations": ["示例地點"]
+  },
+  "skills": [
+    {
+      "name": "技能甲",
+      "aliases": ["技能甲別名"],
+      "claimedLevel": "B",
+      "evidence": "示例專案成果"
+    },
+    {
+      "name": "技能乙",
+      "claimedLevel": "C"
+    }
+  ],
+  "salary": {
+    "floor": 50000,
+    "expectedMin": 55000,
+    "expectedMax": 75000
+  },
+  "dealBreakers": {
+    "industries": [],
+    "education": [],
+    "keywords": [],
+    "travel": false,
+    "languages": []
+  },
+  "preferences": {
+    "industries": [],
+    "companyTypes": [],
+    "roleTypes": []
+  },
+  "growth": {
+    "direction": "示例成長方向",
+    "comfortRatio": 0.5,
+    "challengeRatio": 0.5,
+    "challengeGapTolerance": 0.2
+  },
+  "learning": {
+    "willingness": "願意",
+    "hoursPerWeek": 3
+  },
+  "excludeKeywords": []
+}

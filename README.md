@@ -105,6 +105,23 @@ claude mcp add job104 -- node /你的路徑/104-mcp-server/dist/index.js
 | `get_job_detail` | ✅ 真實資料 | 取得單筆職缺完整詳情：完整 JD、薪資、地點、學經歷要求、技能、語言能力、福利、產業別 |
 | `get_company_jobs` | ✅ 真實資料 | 列出某公司所有在徵職缺（分頁） |
 | `get_apply_analysis` | ✅ 真實資料 | 單筆職缺的應徵者分析：兩週內不重複應徵人數（確切人數，104 網站只給區間）＋學歷／年齡／年資／語言／科系／技能／證照分布。**只在你明確要求時才會被呼叫** |
+| `init_profile` | ✅ 本機資料 | 唯讀回傳 profile/rubric 初始化狀態、文件匯入與純問卷兩種流程 |
+| `save_profile` | ✅ 本機資料 | 驗證並以 0600 權限儲存使用者自己的 profile 與 rubric，不回顯整份內容 |
+| `score_job` | ✅ 參考評分 | 取得 JD 後依本機 profile/rubric 評估；關鍵字比對粗略，不保證準確 |
+| `get_company_salary` | ✅ 官方開放資料 | 查詢上市／上櫃 CSV 的非主管全時員工年度薪資統計，多家符合時回候選不猜 |
+
+### 求職背景初始化（本機）
+
+先呼叫 `init_profile` 查看狀態與問卷，再選一種模式建立草稿：
+
+1. `import` 文件匯入：Claude 讀一般履歷或背景文件，逐欄抽成 profile 草稿，每欄附來源原文並逐項確認；缺資料才補問。
+2. `questionnaire` 純問卷：依 `init_profile` 回傳的 `questionnaireSchema` 逐題回答，再逐項確認。
+
+確認後才呼叫 `save_profile` 寫入 `profile.json` 與 `rubric.json`。`score_job` 在任一檔案缺少時會回 `needsInit`，不會憑空評分。兩種模式都不收密碼、身分證、帳號等機敏資料。
+
+### 隱私與資料位置
+
+個人 profile 與評分 rubric 只存使用者本機，預設位置是 `~/.config/job104-mcp/profile.json` 與 `rubric.json`；可用 `JOB104_HOME` 指定其他本機目錄。檔案會以 0600 權限寫入，且已加入 git ignore，不會寫進公開 repo。程式不會把 profile 內容寫入 log；`score_job` 只回傳 profile 的短 hash 供結果追溯。
 
 ### `search_jobs` 參數
 
