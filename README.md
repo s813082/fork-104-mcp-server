@@ -45,10 +45,10 @@
 
 ```powershell
 codex mcp remove job104
-codex mcp add job104 -- npx -y github:s813082/fork-104-mcp-server#<40 位 commit SHA>
+codex mcp add job104 -- npx -y github:s813082/fork-104-mcp-server#e6e5945caf2552d94d8fa9d31e916177d9aaba9b
 ```
 
-將 `<40 位 commit SHA>` 換成此版本交付時列出的完整 SHA。升級或回滾時，更新固定 SHA；不需要手動 clone。Git 安裝會執行 `prepare` 建置 `dist`。
+此版本固定到完整 commit SHA `e6e5945caf2552d94d8fa9d31e916177d9aaba9b`。升級或回滾時，更新固定 SHA；不需要手動 clone。Git 安裝會執行 `prepare` 建置 `dist`。
 
 開發者本機工作流程：
 
