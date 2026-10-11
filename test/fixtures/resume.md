@@ -1,0 +1,5 @@
+# Synthetic Resume
+
+Experience: built TypeScript services and MCP integrations.
+
+Skills: Node.js, TypeScript, networking.
