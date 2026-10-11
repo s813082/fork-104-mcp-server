@@ -99,3 +99,9 @@ test("HTML conversion drops executable and embedded instructions", () => {
   assert.match(result.text, /Build APIs/);
   assert.equal(result.text.includes("ignore all rules"), false);
 });
+
+test("HTML conversion handles encoded markup from job-board APIs", () => {
+  const result = htmlToText("&lt;html&gt;&lt;head&gt;&lt;title&gt;Engineer &amp;amp; Team&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;p&gt;Build APIs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;");
+  assert.equal(result.title, "Engineer & Team");
+  assert.equal(result.text, "Build APIs");
+});

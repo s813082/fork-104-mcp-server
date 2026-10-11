@@ -187,9 +187,12 @@ function decodeEntities(text: string): string {
 }
 
 export function htmlToText(html: string): { readonly title: string; readonly text: string } {
-  const title = decodeEntities((html.match(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1] ?? "").replace(/<[^>]*>/g, " "))
+  const decoded = decodeEntities(html);
+  const hasMarkup = (value: string) => /<(?:html|head|title|body|p|div|section|article|li|h[1-6]|tr|br|ul|ol|strong|em)\b/i.test(value);
+  const source = hasMarkup(html) ? html : decoded;
+  const title = decodeEntities((source.match(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1] ?? "").replace(/<[^>]*>/g, " "))
     .replace(/\s+/g, " ").trim();
-  const body = html.match(/<body\b[^>]*>([\s\S]*?)<\/body\s*>/i)?.[1] ?? html;
+  const body = source.match(/<body\b[^>]*>([\s\S]*?)<\/body\s*>/i)?.[1] ?? source;
   const text = decodeEntities(
     body
       .replace(/<!--[\s\S]*?-->/g, " ")
